@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ .Release.Name }}"
+spec:
+  serviceName: "{{ .Release.Name }}"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firezone
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app: firezone
+    spec:
+      initContainers:
+      - name: init
+        image: busybox
+        command: ['sh', '-c']
+        args: 
+          - while ! nc -z {{ .Release.Name }}-postgresql 5432; do sleep 60; printf "-"; done;
+            sysctl -w net.ipv4.ip_forward=1;
+            sysctl -w net.ipv6.conf.all.disable_ipv6=0;
+            sysctl -w net.ipv6.conf.all.forwarding=1;
+        securityContext:
+          privileged: true
+      containers:
+      - name: firezone
+        image: "{{ .Values.firezone.image.repository }}:{{ .Values.firezone.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.firezone.image.pullPolicy }}
+        ports:
+          - name: wireguard
+            containerPort: 51820
+            protocol: UDP
+          - name: http
+            containerPort: 13000
+            protocol: TCP
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN", "SYS_MODULE"]
+        envFrom:
+        - configMapRef:
+            name: "{{ .Release.Name }}-env"
+        - secretRef:
+            name: "{{ .Release.Name }}-env"
+        volumeMounts:
+        - mountPath: /var/firezone
+          name: firezone-data
+  volumeClaimTemplates:
+  - metadata:
+      name: firezone-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 100Mi

@@ -1,0 +1,18 @@
+apiVersion: v2
+name: firezone
+description: Firezone VPN
+home: https://www.firezone.dev/
+type: application
+keywords:
+  - firezone
+  - wireguard
+  - vpn
+
+version: 0.0.1
+appVersion: 0.7.26
+
+dependencies:
+  - name: postgresql
+    version: "12.3.*"
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: postgresql.enabled

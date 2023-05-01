@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-env"
+data:
+  VERSION: "{{ .Chart.AppVersion }}"
+  EXTERNAL_URL: {{ .Values.firezone.externalUrl }}
+  DATABASE_HOST: {{ .Release.Name }}-postgresql
+  DATABASE_NAME: {{ .Values.postgresql.auth.database }}
+  DATABASE_USER: {{ .Values.postgresql.auth.username }}
+  DEFAULT_CLIENT_ENDPOINT: {{ .Values.firezone.endpoint }}
+  WIREGUARD_IPV4_NETWORK: "100.64.0.0/10"
+  WIREGUARD_IPV4_ADDRESS: "100.64.0.1"
+  WIREGUARD_IPV6_NETWORK: "fd00::/106"
+  WIREGUARD_IPV6_ADDRESS: "fd00::1"
+  TELEMETRY_ENABLED: "false"
+  TID: "123456"
+  TELEMETRY_ID: "123456"
