@@ -148,10 +148,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - kimtruong.firezone.sandbox.peterbean.net
+      - firezone.sandbox.peterbean.net
       secretName: ingress-tls
   rules:
-  - host: "kimtruong.firezone.sandbox.peterbean.net"
+  - host: "firezone.sandbox.peterbean.net"
     http:
       paths:
       - path: /
@@ -163,3 +163,5 @@ spec:
               number: 13000
 EOF
 ```
+
+**Note**: Replace `firezone.sandbox.peterbean.net` in ingress with your domain
