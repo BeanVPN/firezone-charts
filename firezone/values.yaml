@@ -1,8 +1,8 @@
 firezone:
   adminEmail: "admin@peterbean.net"
-  externalUrl: "https://firezone.peterbean.net"
-  endpoint: firezone.peterbean.net:30820
-  adminPassword: xxxx
+  externalUrl: "https://demo.firezone.sandbox.peterbean.net"
+  endpoint: demo.firezone.sandbox.peterbean.net:30820
+  adminPassword: abc123456789012
 
   image:
     repository: firezone/firezone
@@ -15,4 +15,4 @@ postgresql:
   auth:
     database: firezone
     username: firezone
-    password: xxx
+    password: pgpassword123

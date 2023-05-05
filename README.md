@@ -148,10 +148,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - firezone.sandbox.peterbean.net
+      - demo.firezone.sandbox.peterbean.net
       secretName: ingress-tls
   rules:
-  - host: "firezone.sandbox.peterbean.net"
+  - host: "demo.firezone.sandbox.peterbean.net"
     http:
       paths:
       - path: /
@@ -164,4 +164,7 @@ spec:
 EOF
 ```
 
-**Note**: Replace `firezone.sandbox.peterbean.net` in ingress with your domain
+**Note**: Replace `demo.firezone.sandbox.peterbean.net` in ingress with your domain
+
+Finally, enable hostpage-storage and run helm install command
+microk8s enable hostpath-storage
