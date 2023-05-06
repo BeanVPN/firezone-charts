@@ -45,13 +45,10 @@ spec:
         - secretRef:
             name: "{{ .Release.Name }}-env"
         volumeMounts:
-        - mountPath: /var/firezone
-          name: firezone-data
-  volumeClaimTemplates:
-  - metadata:
-      name: firezone-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 100Mi
+        - name: firezone-data
+          mountPath: /var/firezone
+          readOnly: true
+      volumes:
+      - name: firezone-data
+        secret:
+          secretName: "{{ .Release.Name }}-files"
