@@ -8,7 +8,9 @@ firezone:
     repository: firezone/firezone
     pullPolicy: IfNotPresent
     tag: ""
-  
+
+  serviceType: NodePort
+
 # postgresql
 postgresql:
   enabled: true
