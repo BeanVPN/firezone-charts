@@ -16,3 +16,4 @@ data:
   TELEMETRY_ENABLED: "false"
   TID: "123456"
   TELEMETRY_ID: "123456"
+  RESET_ADMIN_ON_BOOT: "true"

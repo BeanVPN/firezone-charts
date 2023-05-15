@@ -9,12 +9,23 @@ firezone:
     pullPolicy: IfNotPresent
     tag: ""
 
-  serviceType: NodePort
-
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      
 # postgresql
+# global:
+#   postgresql:
+#     auth:
+#       postgresPassword: JQxObIn1h0
+
 postgresql:
   enabled: true
   auth:
+    postgresPassword: JQxObIn1h0
     database: firezone
     username: firezone
     password: pgpassword123
