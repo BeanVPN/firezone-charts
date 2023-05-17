@@ -1,8 +1,9 @@
 firezone:
-  adminEmail: "admin@peterbean.net"
-  externalUrl: "https://demo.firezone.sandbox.peterbean.net"
-  endpoint: demo.firezone.sandbox.peterbean.net:51820
-  adminPassword: abc123456789012
+  adminEmail: "admin@example.com"
+  externalUrl: "https://firezone.example.com"
+  endpoint: domain:port
+  adminPassword: xxxxxxxx
+  privateKey: xxxxxxxx
 
   image:
     repository: firezone/firezone
@@ -12,25 +13,11 @@ firezone:
   service:
     type: LoadBalancer
     annotations:
-      service.beta.kubernetes.io/aws-load-balancer-type: external
-      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
-      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-west-2:606500562958:certificate/68663cbd-3b93-4045-8731-f9b229f49458"
-      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
-      service.beta.kubernetes.io/aws-load-balancer-attributes: load_balancing.cross_zone.enabled=true
-      service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "13000"
-      service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "2"
-
-# postgresql
-# global:
-#   postgresql:
-#     auth:
-#       postgresPassword: JQxObIn1h0
 
 postgresql:
   enabled: true
   auth:
-    postgresPassword: JQxObIn1h0
+    postgresPassword: xxxxxxxx
     database: firezone
     username: firezone
-    password: pgpassword123
+    password: xxxxxxxxxxx
