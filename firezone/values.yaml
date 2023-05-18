@@ -1,27 +1,32 @@
 firezone:
+  domain: firezone.example.com
   adminEmail: "admin@example.com"
-  externalUrl: "https://firezone.example.com"
-  endpoint: domain:port
   adminPassword: xxxxxxxx
   privateKey: xxxxxxxx
   replicas: 2
+
   image:
     repository: firezone/firezone
     pullPolicy: IfNotPresent
     tag: ""
 
   service:
-    type: LoadBalancer
+    type: NodePort
     annotations:
     # AWS NLB
-      # service.beta.kubernetes.io/aws-load-balancer-type: external
-      # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: instance
-      # service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-      # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "<ACM ARN>"
-      # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
-      # service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "30080"
-      # service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "2"
-      # service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: deregistration_delay.connection_termination.enabled=true
+    # type: LoadBalancer
+    # annotations:
+    #   service.beta.kubernetes.io/aws-load-balancer-type: external
+    #   service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: instance
+    #   service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    #   service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "<ACM ARN>"
+    #   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+    #   service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "30080"
+    #   service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "2"
+    #   service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: deregistration_delay.connection_termination.enabled=true
+    ports:
+      wireguard: 30820
+      http: 30080
 
 postgresql:
   enabled: true

@@ -13,11 +13,11 @@ spec:
     port: 51820
     protocol: UDP
     targetPort: wireguard
-    nodePort: 30820
+    nodePort: {{ .Values.firezone.service.ports.wireguard }}
   - name: http
     port: 443
     protocol: TCP
     targetPort: http
-    nodePort: 30080
+    nodePort: {{ .Values.firezone.service.ports.http }}
   selector:
     app: firezone

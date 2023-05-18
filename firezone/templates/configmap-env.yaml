@@ -4,11 +4,11 @@ metadata:
   name: "{{ .Release.Name }}-env"
 data:
   VERSION: "{{ .Chart.AppVersion }}"
-  EXTERNAL_URL: {{ .Values.firezone.externalUrl }}
+  EXTERNAL_URL: https://{{ .Values.firezone.domain }}
   DATABASE_HOST: {{ .Release.Name }}-postgresql
   DATABASE_NAME: {{ .Values.postgresql.auth.database }}
   DATABASE_USER: {{ .Values.postgresql.auth.username }}
-  DEFAULT_CLIENT_ENDPOINT: {{ .Values.firezone.endpoint }}
+  DEFAULT_CLIENT_ENDPOINT: {{ .Values.firezone.domain }}:{{ .Values.firezone.service.ports.wireguard }}
   WIREGUARD_IPV4_NETWORK: "100.64.0.0/10"
   WIREGUARD_IPV4_ADDRESS: "100.64.0.1"
   WIREGUARD_IPV6_NETWORK: "fd00::/106"
