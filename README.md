@@ -50,22 +50,25 @@ kubectl delete pvc -l release=my-release
 
 | Name                     | Description                                                                                      | Value              |
 | ------------------------ | ------------------------------------------------------------------------------------------------ | ------------------ |
+| `domain`                 | Firezone domain                                                                                  | `""`               |
 | `adminEmail `            | Primary administrator email.                                                                     | `""`               |
-| `externalUrl`            | The external URL the web UI will be accessible at                                                | `""`               |
-| `endpoint`               | IPv4, IPv6 address, or FQDN that devices will be configured to connect to                        | `""`               |
 | `adminPassword`          | Default password that will be used for creating or resetting the primary administrator account.  | `""`               |
 | `image.repository`       | Firezone image repository                                                                        | `firezone/firezone`|
 | `image.tag`              | Firezone image tag                                                                               | `""`               |
 | `image.pullPolicy`       | Firezone image pull policy                                                                       | `IfNotPresent`     |
-
+| `service.type`           | Kubernetes service of Firezone                                                                   | `NodePort`         |
+| `service.annotation`     | Annotations of Firezone service                                                                  | `""`               |
+| `port.wireguard`         | Node port for wireguard                                                                          | `30820`            |
+| `port.http`              | Node port for Firezone portal                                                                    | `30080`            |
 
 ### PostgreSQL common parameters
 
-| Name                           | Description                                        | Value           |
-| ------------------------------ | -------------------------------------------------- | --------------- |
-| `postgresql.auth.database`     | Name for a Firezone database to create             | `firezone`    |
-| `postgresql.auth.username`     | Name for a Firezone user to create                 | `firezone`    |
-| `postgresql.auth.password`     | Password for the Firezone user to create           | `""`            |
+| Name                               | Description                                        | Value           |
+| ---------------------------------- | -------------------------------------------------- | --------------- |
+| `postgresql.auth.postgresPassword` | Password of `postgres` user                        | `""`    |
+| `postgresql.auth.database`         | Name for a Firezone database to create             | `firezone`    |
+| `postgresql.auth.username`         | Name for a Firezone user to create                 | `firezone`    |
+| `postgresql.auth.password`         | Password for the Firezone user to create           | `""`            |
 
 
 # Setup MicroK8s to run Firezone on public subnet
