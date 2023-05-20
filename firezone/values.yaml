@@ -3,7 +3,7 @@ firezone:
   adminEmail: "admin@example.com"
   adminPassword: xxxxxxxx
   privateKey: xxxxxxxx
-  replicas: 2
+  replicas: 1
 
   image:
     repository: firezone/firezone

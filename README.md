@@ -72,6 +72,12 @@ kubectl delete pvc -l release=my-release
 
 
 # Setup MicroK8s to run Firezone on public subnet
+## Prerequisite
+- Enable these addons:
+  + dns
+  + hostpath-storage
+  + cert-manager
+  + ingress
 ## Configure pod CIDR for Calico CNI https://microk8s.io/docs/configure-cni#configure-pod-cidr-6
 The default CIDR for pods is 10.1.0.0/16
 
@@ -151,10 +157,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - demo.firezone.sandbox.peterbean.net
+      - firezone.example.com
       secretName: ingress-tls
   rules:
-  - host: "demo.firezone.sandbox.peterbean.net"
+  - host: "firezone.example.com"
     http:
       paths:
       - path: /
@@ -163,11 +169,13 @@ spec:
           service:
             name: firezone
             port:
-              number: 13000
+              number: 443
 EOF
 ```
 
-**Note**: Replace `demo.firezone.sandbox.peterbean.net` in ingress with your domain
+**Note**: 
+ - Replace `firezone.example.com` in ingress with your domain
+ - Replace email with valid one in CertIssuer
 
 Finally, enable hostpage-storage and run helm install command
 microk8s enable hostpath-storage
