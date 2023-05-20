@@ -174,6 +174,7 @@ microk8s enable hostpath-storage
 
 # Setup KOps on AWS to run Firezone on private subnet
 ## Prerequisite
+- Configure discovery store for KOps
 - Enable these addons in KOps:
   + AWS Load Balancer Controller
   + Pod Identity Webhoo
