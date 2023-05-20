@@ -68,7 +68,7 @@ kubectl delete pvc -l release=my-release
 | `postgresql.auth.password`     | Password for the Firezone user to create           | `""`            |
 
 
-# Setup MicroK8s to run Firezone
+# Setup MicroK8s to run Firezone on public subnet
 ## Configure pod CIDR for Calico CNI https://microk8s.io/docs/configure-cni#configure-pod-cidr-6
 The default CIDR for pods is 10.1.0.0/16
 
@@ -168,3 +168,26 @@ EOF
 
 Finally, enable hostpage-storage and run helm install command
 microk8s enable hostpath-storage
+
+# Setup KOps on AWS to run Firezone on private subnet
+## Prerequisite
+- Enable these addons in KOps:
+  + AWS Load Balancer Controller
+  + Pod Identity Webhoo
+## Steps
+1. Create AWS public certificate of your firezone domain
+2. Deploy firezone with this config in values file to create AWS NLB for firezone service:
+```
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: instance
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "<ARN of AWS certificate>"
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "30080"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "2"
+      service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: deregistration_delay.connection_termination.enabled=true
+```
+3. Map your firezone domain with the domain of AWS NLB
