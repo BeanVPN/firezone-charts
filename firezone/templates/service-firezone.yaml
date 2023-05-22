@@ -2,18 +2,22 @@ apiVersion: v1
 kind: Service
 metadata:
   name: "{{ .Release.Name }}"
+  {{- with .Values.firezone.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
-  type: NodePort
+  type: "{{ .Values.firezone.service.type }}"
   ports:
   - name: wireguard
     port: 51820
-    targetPort: wireguard
-    nodePort: 30820
     protocol: UDP
+    targetPort: wireguard
+    nodePort: {{ .Values.firezone.service.ports.wireguard }}
   - name: http
-    port: 13000
-    targetPort: http
-    nodePort: 30080
+    port: 443
     protocol: TCP
+    targetPort: http
+    nodePort: {{ .Values.firezone.service.ports.http }}
   selector:
     app: firezone

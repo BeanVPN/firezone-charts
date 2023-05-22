@@ -1,10 +1,9 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: "{{ .Release.Name }}"
 spec:
-  serviceName: "{{ .Release.Name }}"
-  replicas: 1
+  replicas: {{ .Values.firezone.replicas }}
   selector:
     matchLabels:
       app: firezone
@@ -19,7 +18,7 @@ spec:
         image: busybox
         command: ['sh', '-c']
         args: 
-          - while ! nc -z {{ .Release.Name }}-postgresql 5432; do sleep 60; printf "-"; done;
+          - while ! nc -z {{ .Release.Name }}-postgresql 5432; do sleep 30; printf "-"; done;
             sysctl -w net.ipv4.ip_forward=1;
             sysctl -w net.ipv6.conf.all.disable_ipv6=0;
             sysctl -w net.ipv6.conf.all.forwarding=1;
@@ -45,13 +44,10 @@ spec:
         - secretRef:
             name: "{{ .Release.Name }}-env"
         volumeMounts:
-        - mountPath: /var/firezone
-          name: firezone-data
-  volumeClaimTemplates:
-  - metadata:
-      name: firezone-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 100Mi
+        - name: firezone-data
+          mountPath: /var/firezone
+          readOnly: true
+      volumes:
+      - name: firezone-data
+        secret:
+          secretName: "{{ .Release.Name }}-files"

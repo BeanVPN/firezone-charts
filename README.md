@@ -50,25 +50,34 @@ kubectl delete pvc -l release=my-release
 
 | Name                     | Description                                                                                      | Value              |
 | ------------------------ | ------------------------------------------------------------------------------------------------ | ------------------ |
+| `domain`                 | Firezone domain                                                                                  | `""`               |
 | `adminEmail `            | Primary administrator email.                                                                     | `""`               |
-| `externalUrl`            | The external URL the web UI will be accessible at                                                | `""`               |
-| `endpoint`               | IPv4, IPv6 address, or FQDN that devices will be configured to connect to                        | `""`               |
 | `adminPassword`          | Default password that will be used for creating or resetting the primary administrator account.  | `""`               |
 | `image.repository`       | Firezone image repository                                                                        | `firezone/firezone`|
 | `image.tag`              | Firezone image tag                                                                               | `""`               |
 | `image.pullPolicy`       | Firezone image pull policy                                                                       | `IfNotPresent`     |
-
+| `service.type`           | Kubernetes service of Firezone                                                                   | `NodePort`         |
+| `service.annotation`     | Annotations of Firezone service                                                                  | `""`               |
+| `port.wireguard`         | Node port for wireguard                                                                          | `30820`            |
+| `port.http`              | Node port for Firezone portal                                                                    | `30080`            |
 
 ### PostgreSQL common parameters
 
-| Name                           | Description                                        | Value           |
-| ------------------------------ | -------------------------------------------------- | --------------- |
-| `postgresql.auth.database`     | Name for a Firezone database to create             | `firezone`    |
-| `postgresql.auth.username`     | Name for a Firezone user to create                 | `firezone`    |
-| `postgresql.auth.password`     | Password for the Firezone user to create           | `""`            |
+| Name                               | Description                                        | Value           |
+| ---------------------------------- | -------------------------------------------------- | --------------- |
+| `postgresql.auth.postgresPassword` | Password of `postgres` user                        | `""`    |
+| `postgresql.auth.database`         | Name for a Firezone database to create             | `firezone`    |
+| `postgresql.auth.username`         | Name for a Firezone user to create                 | `firezone`    |
+| `postgresql.auth.password`         | Password for the Firezone user to create           | `""`            |
 
 
-# Setup MicroK8s to run Firezone
+# Setup MicroK8s to run Firezone on public subnet
+## Prerequisite
+- Enable these addons:
+  + dns
+  + hostpath-storage
+  + cert-manager
+  + ingress
 ## Configure pod CIDR for Calico CNI https://microk8s.io/docs/configure-cni#configure-pod-cidr-6
 The default CIDR for pods is 10.1.0.0/16
 
@@ -148,10 +157,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - demo.firezone.sandbox.peterbean.net
+      - firezone.example.com
       secretName: ingress-tls
   rules:
-  - host: "demo.firezone.sandbox.peterbean.net"
+  - host: "firezone.example.com"
     http:
       paths:
       - path: /
@@ -160,11 +169,37 @@ spec:
           service:
             name: firezone
             port:
-              number: 13000
+              number: 443
 EOF
 ```
 
-**Note**: Replace `demo.firezone.sandbox.peterbean.net` in ingress with your domain
+**Note**: 
+ - Replace `firezone.example.com` in ingress with your domain
+ - Replace email with valid one in CertIssuer
 
 Finally, enable hostpage-storage and run helm install command
 microk8s enable hostpath-storage
+
+# Setup KOps on AWS to run Firezone on private subnet
+## Prerequisite
+- Configure discovery store for KOps
+- Enable these addons in KOps:
+  + AWS Load Balancer Controller
+  + Pod Identity Webhoo
+## Steps
+1. Create AWS public certificate of your firezone domain
+2. Deploy firezone with this config in values file to create AWS NLB for firezone service:
+```
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: instance
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "<ARN of AWS certificate>"
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "30080"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "2"
+      service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: deregistration_delay.connection_termination.enabled=true
+```
+3. Map your firezone domain with the domain of AWS NLB
